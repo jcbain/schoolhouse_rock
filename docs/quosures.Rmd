@@ -1,0 +1,44 @@
+---
+title: "r quosures"
+author: "James Bain"
+date: "5/15/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Quosures in `R`
+
+## `glue` for Interpreting String Literals`
+
+**an example**
+
+```{r}
+day <- "Monday"
+glue::glue("{day} sucks!")
+```
+
+```{r}
+gripe <- function(day){
+  "day sucks!"
+}
+
+gripe("Monday")
+```
+
+```{r}
+gripe <- function(day){
+  glue::glue("{day} sucks!")
+}
+
+gripe("Monday")
+```
+
+```{r}
+age <- 7
+glue::glue("last year, Pippa was {age - 1} years old")
+
+glue::glue("next year, Prairie will be {age + 1} years old", age = 5)
+```
