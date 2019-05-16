@@ -11,6 +11,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Quosures in `R`
 
+```{r}
+library(dplyr)
+```
+
 ## `glue` for Interpreting String Literals
 
 **an example**
@@ -41,4 +45,122 @@ age <- 7
 glue::glue("last year, Pippa was {age - 1} years old")
 
 glue::glue("next year, Prairie will be {age + 1} years old", age = 5)
+```
+
+```{r}
+cats <- tibble(name = c('murphey', 'justine'),
+               daily_food = c(1, 2),
+               nightly_food = c(2, 1),
+               age = c(4, 5))
+
+dogs <- tibble(name = c('spaghetti', 'ronda'),
+               daily_food = c(7, 5),
+               age = c(5, 4))
+```
+
+```{r}
+
+cats %>% glue::glue_data("{name} gets {daily_food} oz of food in the morning \\
+                          and {nightly_food} oz of food in the evening.")
+```
+
+```{r}
+
+dogs %>% mutate(schedule = glue::glue("{name} eats {daily_food} oz in the \\
+                                      morning."))
+```
+
+```{r}
+find_total_food <- function(df){
+  dplyr::mutate(df, total_food = daily_food + nightly_food)
+}
+
+find_total_food(cats)
+```
+
+```{r}
+nightly_food <- 10 
+
+find_total_food(dogs)
+```
+
+```{r, error=TRUE}
+find_total_food <- function(df){
+  dplyr::mutate(df, total_food = .data$daily_food + .data$nightly_food)
+}
+
+find_total_food(dogs)
+```
+
+```{r}
+pets <- bind_rows(mutate(cats, pet = 'cat'), 
+                  mutate(dogs, pet = 'dog'))
+
+pets %>%
+  group_by(pet) %>%
+  summarize(average_daily_food = mean(daily_food))
+
+pets %>% 
+  group_by(age) %>%
+  summarize(average_daily_food = mean(daily_food))
+```
+
+```{r, error=TRUE}
+find_average_food <- function(df, group_var){
+  df %>% 
+    dplyr::group_by(group_var) %>%
+    summarize(average_daily_food = mean(.data$daily_food))
+}
+
+find_average_food(pets, pet)
+```
+
+```{r}
+find_average_food(pets, 'age')
+```
+
+```{r}
+quo(age)
+quo(daily_food + nightly_food)
+quo("age")
+```
+
+```{r}
+find_average_food(pets, quo(age))
+```
+
+```{r}
+find_average_food <- function(df, group_var){
+  df %>%
+    group_by(!! group_var) %>%
+    summarize(average_daily_food = mean(.data$daily_food))
+}
+
+find_average_food(pets, quo(age))
+```
+
+```{r}
+find_average_food <- function(df, group_var){
+  quoted_group_var <- quo(group_var)
+  print(quoted_group_var)
+  
+  df %>%
+    group_by(!! group_var) %>%
+    summarize(average_daily_food = mean(.data$daily_food))
+}
+
+find_average_food(pets, pet)
+```
+
+```{r}
+find_average_food <- function(df, group_var){
+  quoted_group_var <- enquo(group_var)
+  print(quoted_group_var)
+  
+  df %>%
+    group_by(!! quoted_group_var) %>%
+    summarize(average_daily_food = mean(.data$daily_food))
+}
+
+find_average_food(pets, pet)
 ```
