@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Quosures in `R`
 
+
 ```{r}
 library(dplyr)
 ```
@@ -163,4 +164,33 @@ find_average_food <- function(df, group_var){
 }
 
 find_average_food(pets, pet)
+```
+
+```{r}
+cow_pop <- dplyr::tibble(city = c("New York City", "New York City", 
+                                  "New York City", "Columbia", "Columbia", 
+                                  "Columbia", "Columbia", "Columbia", 
+                                  "Columbia", "Columbia"),
+                         state = c("NY", "NY", "NY", "MO", "MO", "MO", "MO", 
+                                   "SC", "SC", "SC"),
+                         year = c(1990, 2000, 2010, 1980, 1990, 2000, 2010, 
+                                  1990, 2000, 2010),
+                         no_cows = c(500, 550, 500, 900, 1000, 1050, 1050, 800, 
+                                     700, 850))
+
+cow_pop
+```
+
+```{r}
+find_average_pop <- function(df, ...){
+  group_vars <- rlang::enquos(...)
+  
+  df %>%
+    group_by(!!! group_vars) %>%
+    summarize(average_pop = mean(.data$no_cows))
+}
+
+find_average_pop(cow_pop, city, state)
+find_average_pop(cow_pop, city)
+find_average_pop(cow_pop, year)
 ```
