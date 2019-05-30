@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Quosures in `R`
 
 
+
 ```{r}
 library(dplyr)
 ```
@@ -116,7 +117,7 @@ find_average_food <- function(df, group_var){
 find_average_food(pets, pet)
 ```
 
-```{r}
+```{r, error=TRUE}
 find_average_food(pets, 'age')
 ```
 
@@ -126,7 +127,7 @@ quo(daily_food + nightly_food)
 quo("age")
 ```
 
-```{r}
+```{r, error=TRUE}
 find_average_food(pets, quo(age))
 ```
 
@@ -140,7 +141,7 @@ find_average_food <- function(df, group_var){
 find_average_food(pets, quo(age))
 ```
 
-```{r}
+```{r, error=TRUE}
 find_average_food <- function(df, group_var){
   quoted_group_var <- quo(group_var)
   print(quoted_group_var)
